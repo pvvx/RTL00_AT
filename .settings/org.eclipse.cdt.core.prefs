@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.510381534/PATH/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.510381534/PATH/operation=replace
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.510381534/PATH/value=D\:\\MCU\\GNU_Tools_ARM_Embedded\\5.4_2016q2\\bin;c\:\\MinGW\\mingw64\\bin;C\:\\MinGW\\bin;C\:\\MinGW\\msys\\1.0\\bin;D\:\\MCU\\SEGGER\\JLink_V612i;C\:\\Python27;C\:\\Python27\\Scripts;C\:\\Eclipse
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.510381534/append=true
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.510381534/appendContributed=true
