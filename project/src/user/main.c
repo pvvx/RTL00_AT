@@ -66,8 +66,9 @@ void main(void)
 	 DBG_8195A("crypto engine init failed\r\n");
 	 }
 	 */
-#if 0 // def CONFIG_CPU_CLK
+#if 1 // def CONFIG_CPU_CLK
 	if(HalGetCpuClk() != PLATFORM_CLOCK) {
+		*((int *)0x40000074) &= ~(1<<17);
 		HalCpuClkConfig(CPU_CLOCK_SEL_VALUE); // 0 - 166666666 Hz, 1 - 83333333 Hz, 2 - 41666666 Hz, 3 - 20833333 Hz, 4 - 10416666 Hz, 5 - 4000000 Hz
 		HAL_LOG_UART_ADAPTER pUartAdapter;
 		pUartAdapter.BaudRate = RUART_BAUD_RATE_38400;

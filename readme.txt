@@ -38,7 +38,7 @@ Init AT-Web:
 
 ATPW=3
 ATPA=RTL8710,0123456789,1,0
- ATSW=c
+ATSW=c
 
 Next init:
 ATSW=c
