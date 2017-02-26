@@ -53,7 +53,7 @@ void Init_Rand(void)
   */
 void main(void)
 {
-#if DEBUG_MAIN_LEVEL > 3
+#if DEBUG_MAIN_LEVEL > 4
 	 ConfigDebugErr  = -1;
 	 ConfigDebugInfo = -1; //~_DBG_SPI_FLASH_;
 	 ConfigDebugWarn = -1;
@@ -61,38 +61,35 @@ void main(void)
 	 CfgSysDebugInfo = -1;
 	 CfgSysDebugWarn = -1;
 #endif
-/*
-	 if ( rtl_cryptoEngine_init() != 0 ) {
-	 DBG_8195A("crypto engine init failed\r\n");
-	 }
-	 */
-#if 1 // def CONFIG_CPU_CLK
-	if(HalGetCpuClk() != PLATFORM_CLOCK) {
-		*((int *)0x40000074) &= ~(1<<17);
-		HalCpuClkConfig(CPU_CLOCK_SEL_VALUE); // 0 - 166666666 Hz, 1 - 83333333 Hz, 2 - 41666666 Hz, 3 - 20833333 Hz, 4 - 10416666 Hz, 5 - 4000000 Hz
+	 if(HalGetCpuClk() != PLATFORM_CLOCK) {
+#if	CPU_CLOCK_SEL_DIV5_3
+		// 6 - 200000000 Hz, 7 - 10000000 Hz, 8 - 50000000 Hz, 9 - 25000000 Hz, 10 - 12500000 Hz, 11 - 4000000 Hz
+		HalCpuClkConfig(CPU_CLOCK_SEL_VALUE);
+		*((int *)0x40000074) |= (1<<17); // REG_SYS_SYSPLL_CTRL1 |= BIT_SYS_SYSPLL_DIV5_3
+#else
+		// 0 - 166666666 Hz, 1 - 83333333 Hz, 2 - 41666666 Hz, 3 - 20833333 Hz, 4 - 10416666 Hz, 5 - 4000000 Hz
+		*((int *)0x40000074) &= ~(1<<17); // REG_SYS_SYSPLL_CTRL1 &= ~BIT_SYS_SYSPLL_DIV5_3
+		HalCpuClkConfig(CPU_CLOCK_SEL_VALUE);
+#endif
 		HAL_LOG_UART_ADAPTER pUartAdapter;
 		pUartAdapter.BaudRate = RUART_BAUD_RATE_38400;
 		HalLogUartSetBaudRate(&pUartAdapter);
 		SystemCoreClockUpdate();
 		En32KCalibration();
 	}
-#else // 200 MHz
-	HalCpuClkConfig(0);
-	*((int *)0x40000074) |= (1<<17); // 6 - 200000000 Hz, 7 - 10000000 Hz, 8 - 50000000 Hz, 9 - 25000000 Hz, 10 - 12500000 Hz, 11 - 4000000 Hz
-	HAL_LOG_UART_ADAPTER pUartAdapter;
-	pUartAdapter.BaudRate = RUART_BAUD_RATE_38400;
-	HalLogUartSetBaudRate(&pUartAdapter);
-	SystemCoreClockUpdate();
-	En32KCalibration();
+
+#if defined(CONFIG_CRYPTO_STARTUP) && (CONFIG_CRYPTO_STARTUP)
+	 if ( rtl_cryptoEngine_init() != 0 ) {
+		 DBG_8195A("crypto engine init failed\r\n");
+	 }
 #endif
 
 #if DEBUG_MAIN_LEVEL > 1
 	vPortFree(pvPortMalloc(4)); // Init RAM heap
 	fATST(NULL); // RAM/TCM/Heaps info
 #endif
-
 	/* Initialize log uart and at command service */
-	console_init();
+	console_init();	
 
 	/* pre-processor of application example */
 	pre_example_entry();

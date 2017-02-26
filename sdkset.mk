@@ -5,15 +5,14 @@ CFLAGS += -mcpu=cortex-m3 -mthumb -g2 -Os -std=gnu99
 CFLAGS += -fno-common -fmessage-length=0 -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-short-enums -fsigned-char 
 CFLAGS += -w -Wno-pointer-sign    
 LFLAGS = -mcpu=cortex-m3 -mthumb -g -Os --specs=nano.specs -nostartfiles 
-LFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,--entry=Reset_Handler -Wl,--no-enum-size-warning -Wl,--no-wchar-size-warning
+LFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,--entry=Reset_Handler -Wl,--no-enum-size-warning -Wl,--no-wchar-size-warning -Wl,-nostdlib
 
 # LIBS
 # -------------------------------------------------------------------
 LIBS =
-all: LIBS +=_platform_new _wlan _p2p _wps _rtlstd _websocket _xmodem _sdcard _mdns m c nosys gcc 
-mp: LIBS +=_platform_new _wlan_mp _p2p _wps _rtlstd _websocket _xmodem _sdcard _mdns m c nosys gcc
+all: LIBS +=_platform_new _wlan _p2p _wps _websocket _sdcard _xmodem _mdns m c nosys gcc
+mp: LIBS +=_platform_new _wlan_mp _p2p _wps _websocket _sdcard _xmodem _mdns m c nosys gcc
 PATHLIBS = sdk/component/soc/realtek/8195a/misc/bsp/lib/common/gcc
-# LDFILE = rtl8711am-symbol-v03-img2.ld
 LDFILE = rlx8195A-symbol-v04-img2.ld
 BOOTS = sdk/component/soc/realtek/8195a/misc/bsp/image
 
@@ -52,7 +51,7 @@ INCLUDES += sdk/component/soc/realtek/8195a/cmsis
 INCLUDES += sdk/component/soc/realtek/8195a/cmsis/device
 INCLUDES += sdk/component/soc/realtek/8195a/fwlib
 INCLUDES += sdk/component/soc/realtek/8195a/fwlib/rtl8195a
-INCLUDES += sdk/component/soc/realtek/8195a/misc/rtl_std_lib
+INCLUDES += sdk/component/soc/realtek/8195a/misc/rtl_std_lib/
 INCLUDES += sdk/component/soc/realtek/8195a/misc/rtl_std_lib/include
 INCLUDES += sdk/component/common/drivers
 INCLUDES += sdk/component/common/drivers/wlan/realtek/include
@@ -64,7 +63,6 @@ INCLUDES += sdk/component/soc/realtek/8195a/fwlib/ram_lib/wlan/realtek/wlan_ram_
 INCLUDES += sdk/component/common/network/ssl/polarssl-1.3.8/include
 INCLUDES += sdk/component/common/network/ssl/ssl_ram_map/rom
 INCLUDES += sdk/component/common/utilities
-INCLUDES += sdk/component/soc/realtek/8195a/misc/rtl_std_lib/include
 INCLUDES += sdk/component/common/application/apple/WACServer/External/Curve25519
 INCLUDES += sdk/component/common/application/apple/WACServer/External/GladmanAES
 INCLUDES += sdk/component/soc/realtek/8195a/fwlib/ram_lib/usb_otg/include
@@ -358,6 +356,10 @@ ADD_SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_misc.c
 ADD_SRC_C += sdk/component/soc/realtek/8195a/fwlib/ram_lib/startup.c 
 # COMPONENTS
 ADD_SRC_C += sdk/component/common/mbed/targets/hal/rtl8195a/flash_eep.c 
+ADD_SRC_C += sdk/component/soc/realtek/8195a/misc/rtl_std_lib/lib_rtlstd/ram_libc.c 
+ADD_SRC_C += sdk/component/soc/realtek/8195a/misc/rtl_std_lib/lib_rtlstd/ram_libgloss_retarget.c
+ADD_SRC_C += sdk/component/soc/realtek/8195a/misc/rtl_std_lib/lib_rtlstd/rtl_eabi_cast_ram.c
+ADD_SRC_C += sdk/component/soc/realtek/8195a/misc/rtl_std_lib/lib_rtlstd/rtl_math_ram.c
 # -------------------------------------------------------------------
 # SAMPLES
 # -------------------------------------------------------------------
@@ -379,8 +381,8 @@ ADD_SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_sdio_host.c
 #user main
 ADD_SRC_C += project/src/user/main.c
 # components
-#ADD_SRC_C += project/src/user/atcmd_user.c
-
+#ADD_SRC_C += project/src/user/rtl_bios_data.c
+#ADD_SRC_C += sdk/component/common/network/lwip/lwip_v1.4.1/src/apps/mdns/mdns.c 
 #libs
 #driver
 

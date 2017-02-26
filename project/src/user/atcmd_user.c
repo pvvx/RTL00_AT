@@ -17,12 +17,7 @@
 
 #include "sleep_ex_api.h"
 
-//#include "lwip/err.h"
-//#include "arch/cc.h"
-//#include "lwip/mem.h"
-//#include "lwip/tcp.h"
 #include "lwip/tcp_impl.h"
-//#include "lwip/udp.h"
 
 rtw_mode_t wifi_mode = RTW_MODE_STA;
 ext_server_setings ext_serv = {0,{0}}; //{ PLAY_PORT, { PLAY_SERVER }};
