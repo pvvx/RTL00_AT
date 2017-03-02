@@ -80,7 +80,7 @@ void main(void)
 
 #ifdef CONFIG_WDG_ON_IDLE
 	HAL_PERI_ON_WRITE32(REG_SOC_FUNC_EN, HAL_PERI_ON_READ32(REG_SOC_FUNC_EN) & 0x1FFFFF);
-	WDGInitial(10000); // 10 s
+	WDGInitial(CONFIG_WDG_ON_IDLE * 1000); // 10 s
 	WDGStart();
 #endif
 
