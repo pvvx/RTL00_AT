@@ -78,16 +78,23 @@ void main(void)
 		En32KCalibration();
 	}
 
-#if defined(CONFIG_CRYPTO_STARTUP) && (CONFIG_CRYPTO_STARTUP)
-	 if ( rtl_cryptoEngine_init() != 0 ) {
-		 DBG_8195A("crypto engine init failed\r\n");
+#ifdef CONFIG_WDG_ON_IDLE
+	HAL_PERI_ON_WRITE32(REG_SOC_FUNC_EN, HAL_PERI_ON_READ32(REG_SOC_FUNC_EN) & 0x1FFFFF);
+	WDGInitial(10000); // 10 s
+	WDGStart();
+#endif
+
+#if (defined(CONFIG_CRYPTO_STARTUP) && (CONFIG_CRYPTO_STARTUP))
+	 if(rtl_cryptoEngine_init() != 0 ) {
+		 DBG_8195A("Crypto engine init failed!\n");
 	 }
 #endif
 
-#if DEBUG_MAIN_LEVEL > 1
+#if DEBUG_MAIN_LEVEL > 0
 	vPortFree(pvPortMalloc(4)); // Init RAM heap
-	fATST(NULL); // RAM/TCM/Heaps info
+	fATST(); // RAM/TCM/Heaps info
 #endif
+
 	/* Initialize log uart and at command service */
 	console_init();	
 
