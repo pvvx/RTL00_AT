@@ -12,8 +12,9 @@ CFLAGS += $(INCFLAGS)
 
 SRC_O = $(patsubst %.c,%.o,$(patsubst sdk/%,$(SDK_PATH)%,$(ADD_SRC_C))) $(patsubst %.c,%.o,$(patsubst sdk/%,$(SDK_PATH)%,$(SRC_C)))
 DRAM_O = $(patsubst %.c,%.o,$(patsubst sdk/%,$(SDK_PATH)%,$(DRAM_C)))
+BOOT_O = $(patsubst %.c,%.o,$(patsubst sdk/%,$(SDK_PATH)%,$(BOOT_C)))
 
-SRC_C_LIST = $(patsubst sdk/%,$(SDK_PATH)%,$(ADD_SRC_C)) $(patsubst sdk/%,$(SDK_PATH)%,$(SRC_C)) $(patsubst sdk/%,$(SDK_PATH)%,$(DRAM_C))
+SRC_C_LIST = $(patsubst sdk/%,$(SDK_PATH)%,$(ADD_SRC_C)) $(patsubst sdk/%,$(SDK_PATH)%,$(SRC_C)) $(patsubst sdk/%,$(SDK_PATH)%,$(DRAM_C)) $(patsubst sdk/%,$(SDK_PATH)%,$(BOOT_C))
 OBJ_LIST = $(addprefix $(OBJ_DIR)/,$(patsubst %.c,%.o,$(SRC_C_LIST)))
 DEPENDENCY_LIST = $(patsubst %.c,$(OBJ_DIR)/%.d,$(SRC_C_LIST))
 
@@ -43,19 +44,20 @@ build_info:
 	@mv -f .ver project/inc/$@.h
 
 .PHONY:	application 
-application: build_info $(SRC_O) $(DRAM_O)
+application: build_info $(SRC_O) $(DRAM_O) $(BOOT_O)
 	@echo "==========================================================="
 	@echo "Make BootLoader (ram_1.p.bin, ram_1.r.bin)"
 #	@echo "==========================================================="
 	@mkdir -p $(BIN_DIR) $(OBJ_DIR)
-	@cp $(patsubst sdk/%,$(SDK_PATH)%,$(BOOTS))/ram_1.r.bin $(BIN_DIR)/ram_1.r.bin
+##	@cp $(patsubst sdk/%,$(SDK_PATH)%,$(BOOTS))/ram_1.r.bin $(BIN_DIR)/ram_1.r.bin
 	@cp $(patsubst sdk/%,$(SDK_PATH)%,$(BOOTS))/ram_1.p.bin $(BIN_DIR)/ram_1.p.bin
 #	@chmod 777 $(OBJ_DIR)/ram_1.r.bin
-	$(OBJCOPY) --rename-section .data=.loader.data,contents,alloc,load,readonly,data -I binary -O elf32-littlearm -B arm $(BIN_DIR)/ram_1.r.bin $(OBJ_DIR)/ram_1.r.o
+##	$(OBJCOPY) --rename-section .data=.loader.data,contents,alloc,load,readonly,data -I binary -O elf32-littlearm -B arm $(BIN_DIR)/ram_1.r.bin $(OBJ_DIR)/ram_1.r.o
 	@echo "==========================================================="
 	@echo "Link ($(TARGET))"
 #	@echo "==========================================================="
-	@$(LD) $(LFLAGS) -o $(ELFFILE) $(OBJ_LIST) $(OBJ_DIR)/ram_1.r.o $(LIBFLAGS) -T$(LDFILE)
+##	@$(LD) $(LFLAGS) -o $(ELFFILE) $(OBJ_LIST) $(OBJ_DIR)/ram_1.r.o $(LIBFLAGS) -T$(LDFILE)
+	@$(LD) $(LFLAGS) -o $(ELFFILE) $(OBJ_LIST) $(LIBFLAGS) -T$(LDFILE)
 	@$(OBJDUMP) -d $(ELFFILE) > $(OBJ_DIR)/$(TARGET).asm
 
 .PHONY:	prerequirement
@@ -78,6 +80,13 @@ $(DRAM_O): %.o : %.c
 	@mkdir -p $(OBJ_DIR)/$(dir $@)
 	@$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $(OBJ_DIR)/$@
 	@$(OBJCOPY) --prefix-alloc-sections .sdram $(OBJ_DIR)/$@
+	@$(CC) -MM $(CFLAGS) $(INCFLAGS) $< -MT $@ -MF $(OBJ_DIR)/$(patsubst %.o,%.d,$@)
+
+$(BOOT_O): %.o : %.c
+	@echo $<
+	@mkdir -p $(OBJ_DIR)/$(dir $@)
+	@$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $(OBJ_DIR)/$@
+	@$(OBJCOPY) --prefix-alloc-sections .boot $(OBJ_DIR)/$@
 	@$(CC) -MM $(CFLAGS) $(INCFLAGS) $< -MT $@ -MF $(OBJ_DIR)/$(patsubst %.o,%.d,$@)
 	
 -include $(DEPENDENCY_LIST)

@@ -5,6 +5,10 @@
 
 #define RTL8710AF
 //#define RTL8711AM
+/* Image1 on project */
+#define PRESENT_IMAGE1
+/* Image2 on project */
+#define PRESENT_IMAGE2
 /*
  * Target Platform Selection
  */
@@ -24,7 +28,7 @@
 #define RTL8195A 1
 /* 0 - 166666666 Hz, 1 - 83333333 Hz, 2 - 41666666 Hz, 3 - 20833333 Hz, 4 - 10416666 Hz, 5 - 4000000? Hz,
    6 - 200000000 Hz, 7 - 10000000 Hz, 8 - 50000000 Hz, 9 - 25000000 Hz, 10 - 12500000 Hz, 11 - 4000000? Hz */
-#define CONFIG_CPU_CLK 0
+#define CONFIG_CPU_CLK 1
 //166.6MHZ - RUN/IDLE/SLP ~63/21/6.4 mA
 //83.3MHZ  - RUN/IDLE/SLP ~55/15/6.4 mA
 //41.6MHZ  - RUN/IDLE ~51/11 mA
@@ -61,6 +65,7 @@
 #define CONFIG_WDG 1
 #undef  CONFIG_WDG_NON
 #define CONFIG_WDG_NORMAL 1
+#define CONFIG_WDG_ON_IDLE 10 // wdt in sec -> main.c + tasks.c
 #define CONFIG_GDMA_EN 1
 #define CONFIG_GDMA_NORMAL 1
 #undef  CONFIG_GDMA_TEST
@@ -128,7 +133,7 @@
 #undef  CONFIG_CRYPTO_TEST
 #define CONFIG_CRYPTO_MODULE 1
 #define CONFIG_CRYPTO_STARTUP 0
-//#define CONFIG_MII_EN 1
+#define CONFIG_MII_EN	1
 #define CONFIG_PWM_EN 1
 #define CONFIG_PWM_NORMAL 1
 #undef  CONFIG_PWM_TEST
@@ -241,6 +246,6 @@
 #if CPU__CLK_DIV5_3
 #define PLATFORM_CLOCK (200000000ul>>CPU_CLOCK_SEL_VALUE)
 #else
-#define PLATFORM_CLOCK (((200000000ul*5ul)/3ul)>>CPU_CLOCK_SEL_VALUE)
+#define PLATFORM_CLOCK (((200000000ul*5ul)/6ul)>>CPU_CLOCK_SEL_VALUE)
 #endif
 

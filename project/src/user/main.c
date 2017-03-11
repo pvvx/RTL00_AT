@@ -61,22 +61,6 @@ void main(void)
 	 CfgSysDebugInfo = -1;
 	 CfgSysDebugWarn = -1;
 #endif
-	 if(HalGetCpuClk() != PLATFORM_CLOCK) {
-#if	CPU_CLOCK_SEL_DIV5_3
-		// 6 - 200000000 Hz, 7 - 10000000 Hz, 8 - 50000000 Hz, 9 - 25000000 Hz, 10 - 12500000 Hz, 11 - 4000000 Hz
-		HalCpuClkConfig(CPU_CLOCK_SEL_VALUE);
-		*((int *)0x40000074) |= (1<<17); // REG_SYS_SYSPLL_CTRL1 |= BIT_SYS_SYSPLL_DIV5_3
-#else
-		// 0 - 166666666 Hz, 1 - 83333333 Hz, 2 - 41666666 Hz, 3 - 20833333 Hz, 4 - 10416666 Hz, 5 - 4000000 Hz
-		*((int *)0x40000074) &= ~(1<<17); // REG_SYS_SYSPLL_CTRL1 &= ~BIT_SYS_SYSPLL_DIV5_3
-		HalCpuClkConfig(CPU_CLOCK_SEL_VALUE);
-#endif
-		HAL_LOG_UART_ADAPTER pUartAdapter;
-		pUartAdapter.BaudRate = RUART_BAUD_RATE_38400;
-		HalLogUartSetBaudRate(&pUartAdapter);
-		SystemCoreClockUpdate();
-		En32KCalibration();
-	}
 
 #ifdef CONFIG_WDG_ON_IDLE
 	HAL_PERI_ON_WRITE32(REG_SOC_FUNC_EN, HAL_PERI_ON_READ32(REG_SOC_FUNC_EN) & 0x1FFFFF);

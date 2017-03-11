@@ -12,7 +12,7 @@
 #define FEEP_ID_WIFI_AP_CFG 0x5731 // id:'1W', type: struct rtw_wifi_config_t
 #define FEEP_ID_UART_CFG 0x5530 // id:'0U', type: UART_LOG_CONF
 #define FEEP_ID_LWIP_CFG 0x4C30 // id:'0L', type: struct atcmd_lwip_conf
-#define FEEP_ID_DHCP_CFG 0x4430 // id:'0D', type: struct
+#define FEEP_ID_DHCP_CFG 0x4430 // id:'0D', type: struct _sdhcp_cfg
 
 typedef struct _sdhcp_cfg {
 	  u8  mode; // =0 dhcp off, =1 - dhcp on, =2 Static ip, =3 - auto

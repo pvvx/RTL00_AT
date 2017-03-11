@@ -55,8 +55,10 @@ FLASHER_SPEED = 500
 endif
 endif
 
-# COMPILED_BOOT if defined -> extract image1, =1 boot head in elf, =2 boot head ?
-#COMPILED_BOOT=1
+# COMPILED_BOOT if defined -> extract image1, boot head in elf
+COMPILED_BOOT=1
+# COMPILED_BOOT_BIN if !defined -> use source startup boot
+#COMPILED_BOOT_BIN=1
 # PADDINGSIZE defined -> image2 OTA
 PADDINGSIZE =44k
 
@@ -64,8 +66,11 @@ NMAPFILE = $(OBJ_DIR)/$(TARGET).nmap
 
 #FLASHER_PATH ?= flasher/
 
+RAM_IMAGE?= $(BIN_DIR)/ram.bin
+
 RAM1_IMAGE ?= $(BIN_DIR)/ram_1.bin
 RAM1P_IMAGE ?= $(BIN_DIR)/ram_1.p.bin
+RAM1R_IMAGE ?= $(BIN_DIR)/ram_1.r.bin
 
 RAM2_IMAGE = $(BIN_DIR)/ram_2.bin
 RAM2P_IMAGE = $(BIN_DIR)/ram_2.p.bin
@@ -93,10 +98,10 @@ all: $(ELFFILE) $(OTA_IMAGE) $(FLASH_IMAGE) _endgenbin
 mp: $(ELFFILE) $(OTA_IMAGE) $(FLASH_IMAGE) _endgenbin
 
 copybin1:
-	cp $(patsubst sdk/%,$(SDK_PATH)%,$(BOOTS))/ram_1.r.bin $(BIN_DIR)/ram_1.r.bin
+#	cp $(patsubst sdk/%,$(SDK_PATH)%,$(BOOTS))/ram_1.r.bin $(BIN_DIR)/ram_1.r.bin
 	cp $(patsubst sdk/%,$(SDK_PATH)%,$(BOOTS))/ram_1.p.bin $(BIN_DIR)/ram_1.p.bin
 #	@chmod 777 $(OBJ_DIR)/ram_1.r.bin
-	@$(OBJCOPY) --rename-section .data=.loader.data,contents,alloc,load,readonly,data -I binary -O elf32-littlearm -B arm $(BIN_DIR)/ram_1.r.bin $(OBJ_DIR)/ram_1.r.o
+#	@$(OBJCOPY) --rename-section .data=.loader.data,contents,alloc,load,readonly,data -I binary -O elf32-littlearm -B arm $(BIN_DIR)/ram_1.r.bin $(OBJ_DIR)/ram_1.r.o
 
 genbin1: $(ELFFILE) $(RAM1P_IMAGE) 
 
@@ -168,12 +173,12 @@ $(OTA_IMAGE): $(RAM2NS_IMAGE) $(RAM3_IMAGE)
 
 $(RAM1P_IMAGE): $(ELFFILE) $(NMAPFILE) 
 	@echo "==========================================================="
-	@echo "Create image1p ($(RAM1P_IMAGE))"
+	@echo "Create image1r ($(RAM1R_IMAGE))"
 #	@echo "===========================================================" .bootloader
 ifdef COMPILED_BOOT
 	@mkdir -p $(BIN_DIR)
-	@rm -f $(RAM1_IMAGE) $(RAM1P_IMAGE)
-ifeq ($(COMPILED_BOOT),1)
+	@rm -f $(RAM1_IMAGE) $(RAM1R_IMAGE)
+ifdef COMPILED_BOOT_BIN
 	@$(eval RAM1_START_ADDR := $(shell grep _binary_build_bin_ram_1_r_bin_start $(NMAPFILE) | awk '{print $$1}'))
 	@$(eval RAM1_END_ADDR := $(shell grep _binary_build_bin_ram_1_r_bin_end $(NMAPFILE) | awk '{print $$1}'))
 else
@@ -183,19 +188,19 @@ endif
 	$(if $(RAM1_START_ADDR),,$(error "Not found __ram_image1_text_start__!"))
 	$(if $(RAM1_END_ADDR),,$(error "Not found __ram_image1_text_end__!"))
 ifeq ($(RAM1_START_ADDR),$(RAM1_END_ADDR))
-ifneq ($(COMPILED_BOOT),1)
-	$(OBJCOPY) -j .ram.start.table -j .ram_image1.text -Obinary $(ELFFILE) $(RAM1_IMAGE)
-	$(PICK) 0x$(RAM1_START_ADDR) 0x$(RAM1_END_ADDR) $(RAM1_IMAGE) $(RAM1P_IMAGE) body+reset_offset
-else
+ifdef COMPILED_BOOT_BIN
 	$(OBJCOPY) --change-section-address .boot.head=0x10000ba8 -j .boot.head -j .bootloader -Obinary $(ELFFILE) $(RAM1P_IMAGE)
+else
+	$(OBJCOPY) -j .rom_ram -Obinary $(ELFFILE) $(RAM_IMAGE)
+	$(OBJCOPY) -j .ram.start.table -j .ram_image1.text -Obinary $(ELFFILE) $(RAM1_IMAGE)
+	$(PICK) 0x$(RAM1_START_ADDR) 0x$(RAM1_END_ADDR) $(RAM1_IMAGE) $(RAM1R_IMAGE) head+reset_offset 0x0B000
 endif
-	$(warning "Flasher: Use external $(RAM1_IMAGE)?")
 else 
 	$(error "BOOT-image size = 0")
 #	$(error Flasher: COMPILE_BOOT = No)
 endif	
 else
-	@if [ -s $(RAM1P_IMAGE) ]; then echo "Use external $(RAM1P_IMAGE)!"; fi 
+	@if [ -s $(RAM1R_IMAGE) ]; then echo "Use external $(RAM1R_IMAGE)!"; fi 
 endif
 
 $(RAM2P_IMAGE): $(ELFFILE) $(NMAPFILE) 

@@ -207,5 +207,6 @@ See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
 
 //#define RTK_MODE_TIMER
 
+//#define configCHECK_FOR_STACK_OVERFLOW 2
 
 #endif /* FREERTOS_CONFIG_H */
