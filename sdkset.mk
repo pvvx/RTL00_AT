@@ -4,7 +4,7 @@ CFLAGS = -DM3 -DCONFIG_PLATFORM_8195A -DGCC_ARMCM3 -DARDUINO_SDK -DF_CPU=1666666
 CFLAGS += -mcpu=cortex-m3 -mthumb -g2 -Os -std=gnu99 
 CFLAGS += -fno-common -fmessage-length=0 -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-short-enums -fsigned-char 
 CFLAGS += -w -Wno-pointer-sign    
-LFLAGS = -mcpu=cortex-m3 -mthumb -g -Os -nostartfiles
+LFLAGS = -mcpu=cortex-m3 -mthumb -g -Os -nostartfiles -nostdlib
 #--specs=nano.specs
 LFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,--entry=Reset_Handler -Wl,--no-enum-size-warning -Wl,--no-wchar-size-warning -Wl,-nostdlib
 
@@ -188,7 +188,7 @@ SRC_C += sdk/component/common/mbed/targets/hal/rtl8195a/analogin_api.c
 SRC_C += sdk/component/common/mbed/targets/hal/rtl8195a/dma_api.c
 SRC_C += sdk/component/common/mbed/targets/hal/rtl8195a/efuse_api.c
 SRC_C += sdk/component/common/mbed/targets/hal/rtl8195a/ethernet_api.c
-#SRC_C += sdk/component/common/drivers/ethernet_mii/ethernet_mii.c
+SRC_C += sdk/component/common/drivers/ethernet_mii/ethernet_mii.c
 SRC_C += sdk/component/common/mbed/targets/hal/rtl8195a/flash_api.c
 SRC_C += sdk/component/common/mbed/targets/hal/rtl8195a/gpio_api.c
 SRC_C += sdk/component/common/mbed/targets/hal/rtl8195a/gpio_irq_api.c
@@ -219,7 +219,7 @@ SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_gdma.c
 SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_gpio.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_i2c.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_i2s.c
-#SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_mii.c
+SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_mii.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_nfc.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_pcm.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/src/hal_pwm.c
@@ -237,7 +237,7 @@ SRC_C += sdk/component/soc/realtek/8195a/fwlib/rtl8195a/src/rtl8195a_gdma.c
 SRC_C += sdk/component/soc/realtek/8195a/fwlib/rtl8195a/src/rtl8195a_gpio.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/rtl8195a/src/rtl8195a_i2c.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/rtl8195a/src/rtl8195a_i2s.c
-#SRC_C += sdk/component/soc/realtek/8195a/fwlib/rtl8195a/src/rtl8195a_mii.c
+SRC_C += sdk/component/soc/realtek/8195a/fwlib/rtl8195a/src/rtl8195a_mii.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/rtl8195a/src/rtl8195a_nfc.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/rtl8195a/src/rtl8195a_pwm.c
 #SRC_C += sdk/component/soc/realtek/8195a/fwlib/rtl8195a/src/rtl8195a_ssi.c
