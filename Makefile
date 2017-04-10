@@ -7,6 +7,9 @@ ram_all:
 	@$(MAKE) -f sdkbuild.mk
 	@$(MAKE) -f flasher.mk genbin1 genbin23
 
+webfs:
+	@$(MAKE) -f webfs.mk webpages.espfs
+
 .PHONY: ram_all_mp
 ram_all_mp:
 	@$(MAKE) -f sdkbuild.mk mp
@@ -15,45 +18,42 @@ ram_all_mp:
 .PHONY: clean  clean_all
 clean:
 	@$(MAKE) -f sdkbuild.mk clean
+	@$(MAKE) -f webfs.mk clean
 
 clean_all:
 	@$(MAKE) -f sdkbuild.mk clean_all
+	@$(MAKE) -f webfs.mk clean
 	
-.PHONY:	debug ramdebug
-debug: 
-	@$(MAKE) -f application.mk debug	
-
-ramdebug: 
-	@$(MAKE) -f application.mk ramdebug	
-
-.PHONY: flash_OTA flashburn runram reset test readfullflash
-
-flash_OTA: 
-	JLinkGDB_OTA.bat
-
+.PHONY: flashburn runram reset test readfullflash flashwebfs
 flashburn: 
-	JLinkGDB-WrFlash.bat
-	#@$(MAKE) -f flasher.mk flashburn
+	#JLinkGDB-WrFlash.bat
+	@$(MAKE) -f flasher.mk flashburn
+
+flash_OTA:
+	@$(MAKE) -f flasher.mk flash_OTA
+	
+flashwebfs:
+	@$(MAKE) -f webfs.mk webpages.espfs
+	@$(MAKE) -f flasher.mk flashwebfs
+	#JLinkGDB-WrWebFs.bat
 
 runram: 
-	JLink-RunRAM.bat
-	#@$(MAKE) --f flasher.mk runram
+	#JLink-RunRAM.bat
+	@$(MAKE) --f flasher.mk runram
 
 reset: 
-	JLink-Reset.bat
-	#@make -f flasher.mk reset 
+	#JLink-Reset.bat
+	@$(MAKE) -f flasher.mk reset 
 
 test: 
 	JLink-RTL00ConsoleROM.bat
 	#@make -f flasher.mk test 
 
 readfullflash:
-	JLink-RdFullFlash.bat
-	#@make -f flasher.mk readfullflash 
+	#JLink-RdFullFlash.bat
+	@$(MAKE) -f flasher.mk readfullflash 
 
 .PHONY:	prerequirement
 prerequirement:
-#	@$(file >DEPENDENCY_LIST.txt,$(DEPENDENCY_LIST))
+	@$(file >DEPENDENCY_LIST.txt,$(DEPENDENCY_LIST))
 	
-TARGETTYPE := APP
-TARGETNAME := build\obj\build.axf
