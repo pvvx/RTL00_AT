@@ -1,6 +1,9 @@
 /*
  *
  */
+#ifndef _PLATFORM_AUTOCONFIG_H_
+#define _PLATFORM_AUTOCONFIG_H_
+
 #define AUTOCONF_INCLUDED
 
 #define RTL8710AF
@@ -249,3 +252,4 @@
 #define PLATFORM_CLOCK (((200000000ul*5ul)/6ul)>>CPU_CLOCK_SEL_VALUE)
 #endif
 
+#endif // _PLATFORM_AUTOCONFIG_H_
