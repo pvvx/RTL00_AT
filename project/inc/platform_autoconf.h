@@ -17,6 +17,9 @@
  */
 #define CONFIG_WITHOUT_MONITOR 1
 
+#define CONFIG_USE_TCM_HEAP 1
+#define configUSE_STACK_TCM_HEAP 5 // min priority use tcm ?
+
 #undef  CONFIG_RTL8195A 
 #define CONFIG_RTL8195A 1
 #undef  CONFIG_FPGA
